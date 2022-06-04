@@ -12,7 +12,7 @@ th2_range = np.arange(-np.pi, np.pi, delta)
 
 initial_cond = np.array([np.pi/10, np.pi/10, 0, 0])
 eps = 0.01  # the initial difference
-tmax = 10
+tmax = 100
 
 
 points_th1, points_th2 = [], []
