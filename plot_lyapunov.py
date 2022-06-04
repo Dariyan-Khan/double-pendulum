@@ -4,7 +4,7 @@ from tqdm import tqdm
 from lyapunov_time_estimate import lyp_exp
 
 # small perturbation
-delta = np.pi/20
+delta = np.pi/60
 g = 9.81
 
 th1_range = np.arange(-np.pi, np.pi, delta)
