@@ -2,14 +2,39 @@ import numpy as np
 from dp_tidy import Pendulum
 import matplotlib.pyplot as plt
 from matplotlib import animation
+import time
 
 del_rate = 50  # int(p1.num_frames / 10)
+
+
+def calc_E(y):
+    """Return the total energy of the system."""
+    m1 = m2 = L1 = L2 = 1
+    g = 9.81
+    th1, th1d, th2, th2d = y
+    V = -(m1+m2)*L1*g*np.cos(th1) - m2*L2*g*np.cos(th2)
+    T = 0.5*m1*(L1*th1d)**2 + 0.5*m2*((L1*th1d)**2 + (L2*th2d)**2 +
+            2*L1*L2*th1d*th2d*np.cos(th1-th2))
+    return T + V
+
+
+def total_Energy(p1, p2, fr=None, start=False):
+    if start:
+        return calc_E(p1.y0) + \
+            calc_E(p2.y0)
+
+    else:
+
+        return calc_E(p1.sol[fr]) + calc_E(p2.sol[fr])
 
 
 def animate(i, p1, p2, ln1, ln2, trace1, trace2, time_text, time_template,
             tr1_x, tr1_y, tr2_x, tr2_y):
     ln1.set_data([0, p1.x1[i], p1.x2[i]], [0, p1.y1[i], p1.y2[i]])
     ln2.set_data([0, p2.x1[i], p2.x2[i]], [0, p2.y1[i], p2.y2[i]])
+    
+    # print(abs(total_Energy(p1, p2, fr=i) - start_energy))
+
     if p1.to_trace:
         if i % del_rate == 0 and i > 0 and p1.trace_delete:
             del tr1_x[del_rate:]
@@ -76,9 +101,11 @@ if __name__ == "__main__":
     th1 = np.pi
     th2 = np.pi / 2
 
-    p1 = Pendulum(th1, th2, to_trace=False, trace_delete=False)
-    p2 = Pendulum(th1 + eps, th2 + eps, to_trace=False, trace_delete=False)
+    p1 = Pendulum(th1, th2, to_trace=False, trace_delete=False, tmax=100)
+    p2 = Pendulum(th1 + eps, th2 + eps, to_trace=False, trace_delete=False, tmax=100)
+    start_energy = total_Energy(p1, p2, start = True) # noqa
+    print(start_energy)
 
-    print(p1.num_frames)
+    # print(p1.num_frames)
 
     show_anim(p1, p2)
