@@ -4,7 +4,7 @@ from tqdm import tqdm
 from lyapunov_time_estimate import lyp_exp
 
 # small perturbation
-delta = np.pi/60
+delta = np.pi/30
 g = 9.81
 
 th1_range = np.arange(-np.pi, np.pi, delta)
@@ -27,7 +27,7 @@ for th1 in tqdm(th1_range):
 points_th1, points_th2 = np.array(points_th1), np.array(points_th2)
 
 fig, ax = plt.subplots()
-scatter = ax.scatter(points_th1, points_th2, c=vals, cmap='hot', s=30,
+scatter = ax.scatter(points_th1, points_th2, c=vals, cmap='hot', s=35,
                      linewidth=0)
 ax.set_xlabel('Theta 1')
 ax.set_ylabel('Theta 2')
