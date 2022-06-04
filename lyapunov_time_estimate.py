@@ -1,11 +1,10 @@
 import numpy as np
 from dp_tidy import Pendulum
 from tqdm import tqdm
-import time
 
 initial_cond = np.array([np.pi/10, np.pi/10, 0, 0])
 eps = 0.01
-tmax = 100
+tmax = 10000
 err_0 = np.array([np.sqrt(eps / 4.0) for _ in range(4)])
 
 
@@ -16,9 +15,9 @@ def calc_E(y):
 
     th1, th2, th1d, th2d = y
     V = -(m1+m2)*L1*g*np.cos(th1) - m2*L2*g*np.cos(th2)
-    T = 0.5*m1*(L1*th1d)**2 + 0.5*m2*((L1*th1d)**2 + (L2*th2d)**2 +
+    U = 0.5*m1*(L1*th1d)**2 + 0.5*m2*((L1*th1d)**2 + (L2*th2d)**2 +
             2*L1*L2*th1d*th2d*np.cos(th1-th2))
-    return T + V
+    return U + V
 
 
 def principal(x):
@@ -44,7 +43,7 @@ step_rate = 1 / p1.dt
 
 lyp_ests = []
 
-for i in tqdm(range(tmax)):
+for i in range(tmax):
     p1_state = p1.sol[-1]
     p1_state[[1, 2]] = p1_state[[2, 1]]  # swap second and third elements
     assert len(p1_state) == 4
@@ -55,7 +54,7 @@ for i in tqdm(range(tmax)):
     err0_norm = np.linalg.norm(err_0)
     lyp_ests.append((1/T) * (np.log(err1_norm) - np.log(err0_norm)))
     err_0 = (err_1 / err1_norm) * eps  # scaled err_1
-    # print(calc_E(p1_state), "energy")
+    print(calc_E(p1_state), "energy")
     p1 = pendulum_vec(p1_state, T)
     p2 = pendulum_vec(p1_state + err_0, T)
 
